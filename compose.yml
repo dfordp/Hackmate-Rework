@@ -3,7 +3,7 @@ services:
     container_name: nextapp
     image: dfordp/nextapp:latest
     build:
-      context: ./frontend
+      context: ./front-end
       dockerfile: next.dockerfile
     ports:
       - 3000:3000
@@ -15,12 +15,24 @@ services:
     container_name: rustapp
     image: dfordp/rustapp:latest
     build:
-      context: ./backend
+      context: ./backend-rust
       dockerfile: rust.dockerfile
       args:
         DATABASE_URL : postgres://postgres:postgres@db:5432/postgres
     ports:
       - 8080:8080
+    depends_on:
+      - db
+  goapp:
+    container_name: goapp
+    image: goapp:1.0.0
+    build:
+      context: ./backend-go
+      dockerfile: go.dockerfile
+    environment:
+      DATABASE_URL: 'postgres://postgres:postgres@db:5432/postgres?sslmode=disable'
+    ports:
+      - '8000:8000'
     depends_on:
       - db
   db:
